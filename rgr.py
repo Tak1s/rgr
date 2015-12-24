@@ -45,27 +45,36 @@ class GetDetailInfo:
         for i in range(int(count_level)):
             self.arr_level.append(input("Введіть довжину %s-го ступеню: " % (i+1)))
 
+    # Нужно доделать обработчик количества елементов!!!!!
     def get_thread(self):
+
+        def _check_item(item):
+            try:
+                return int(item)
+            except ValueError:
+                return False
 
         def _get_one_item():
             item = input("На яких ступенях присутьня різьба: ")
             item = item.split(",")
-            if isinstance(item, 'list'):
+            if isinstance(item, list):
+                # if len(item) <= self.const_severity:
                 self.arr_thread = item
             else:
-                self.arr_thread.append()
-            if item in const_severity:
-                return item
-            else:
-                print("Неверній параметр жосткости!!!\n")
-                _get_one_severity(text)
+                if len(item) <= self.const_severity:
+                    # _check_item(item)
+
+                    self.arr_thread.append(item)
+                    print("Невірне значення!!!\n\n")
+                    _get_one_item()
+                else:
+                    item
 
         _thread = input("""Наявність різьби на поверхні:
     1 - є різьба
     0 - немає різьби
 """)
         if int(_thread) is 1:
-            print("На яких ступенях присутня різьба:")
             _get_one_item()
         elif int(_thread) is 0:
             print("Більше немає різьби!")
