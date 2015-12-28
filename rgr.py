@@ -1,16 +1,21 @@
 
 class GetDetailInfo:
     def __init__(self, *args):
+        self.dict_config = {}
         self.count_level = input("Введіть кількість ступенів: ")
         self.arr_level = []
         self.severity_level = []
         self.arr_thread = []
+        self.arr_fask = []
+        self.arr_size_fask = []
 
         self.get_lang_level(self.count_level)
         self.get_severity_level()
         self.get_thread()
+        self.get_fask()
+        self.get_size_fask()
 
-        print(self.arr_level)
+        print(self.arr_size_fask)
 
 
     def get_severity_level(self):
@@ -26,10 +31,7 @@ class GetDetailInfo:
                 _get_one_severity(text)
 
         severity_level = input(
-            """Вызначіть Ra ступенів:
-    1 - шорсткість Ra  однакова для всіх ступенів
-    2 - шорсткість Ra різна для кожного ступеня
-"""
+            "Вызначіть Ra ступенів:\n\t1 - шорсткість Ra  однакова для всіх ступенів\n\t2 - шорсткість Ra різна для кожного ступеня\n"
         )
 
         if int(severity_level) is 1:
@@ -56,32 +58,78 @@ class GetDetailInfo:
 
         def _get_one_item():
             item = input("На яких ступенях присутьня різьба: ")
-            item = item.split(",")
-            if isinstance(item, list):
-                # if len(item) <= self.const_severity:
-                self.arr_thread = item
-            else:
-                if len(item) <= self.const_severity:
-                    # _check_item(item)
-
-                    self.arr_thread.append(item)
-                    print("Невірне значення!!!\n\n")
-                    _get_one_item()
+            array_item = item.split(",")
+            self._zero = False
+            for val in array_item:
+                if int(val) is 0 :
+                    print("Більше немає різьби!")
+                    self._zero = True
+                    break
+                elif int(val) <= int(self.count_level):
+                    self.arr_thread.append(int(val))
                 else:
-                    item
+                    break
+            if self._zero is False and len(array_item) <= int(self.count_level):
+                _get_one_item()
 
-        _thread = input("""Наявність різьби на поверхні:
-    1 - є різьба
-    0 - немає різьби
-""")
+
+        _thread = input("Наявність різьби на поверхні:\n\t1 - є різьба\n\t0 - немає різьби\n")
         if int(_thread) is 1:
             _get_one_item()
         elif int(_thread) is 0:
-            print("Більше немає різьби!")
-
+            print("Різьби немає!")
         else:
             print("Невірне значення!!!\n\n")
             self.get_thread()
+
+    def get_fask(self):
+
+        def _get_one_item():
+            item = input("На яких ступенях присутня фаска: ")
+            array_item = item.split(",")
+            self._zero = False
+            for val in array_item:
+                if int(val) is 0:
+                    print("більше немає фасок!")
+                    self._zero = True
+                    break
+                elif int(val) <= int(self.count_level):
+                    self.arr_fask.append(int(val))
+                else:
+                    break
+            if self._zero is False and len(array_item) <= int(self.count_level):
+                _get_one_item()
+
+        _fask = input("Чи наявні фаски:\n\t1 - так\n\t0 - ні\n")
+        if int(_fask) is 1:
+            _get_one_item()
+        elif int(_fask) is 0:
+            print("Фасок немає!")
+        else:
+            print("Невірне значення!!!\n\n")
+            self.get_fask()
+
+    def get_size_fask(self):
+
+        def _get_one_item():
+            item = input("На яких ступенях присутня фаска: ")
+            array_item = item.split(",")
+            self._zero = False
+            for val in array_item:
+                if int(val) is 0:
+                    print("більше немає фасок!")
+                    self._zero = True
+                    break
+                elif int(val) <= int(self.count_level):
+                    self.arr_size_fask.append(int(val))
+                else:
+                    break
+            if self._zero is False and len(array_item) <= int(self.count_level):
+                _get_one_item()
+
+
+        _get_one_item()
+
 
 
 GetDetailInfo()
