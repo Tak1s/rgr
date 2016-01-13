@@ -131,7 +131,7 @@ class GetDetailInfo:
             if _get_one_item(i) is 'break':
                 break
 
-class DisplayMachinePperation:
+class DisplayMachineOperation:
 
     def __init__(self, _detalConfig):
         self.detalConfig = _detalConfig
@@ -168,7 +168,14 @@ class DisplayMachinePperation:
 
         print(self.full_string)
 
+        self.print_to_file()
+
+    def print_to_file(self):
+        f = open('result-machine-operation.txt', 'w')
+        f.write(self.full_string)
+        f.close()
+
 
 detalConfig = GetDetailInfo()
-DisplayMachinePperation(detalConfig.get_config())
+DisplayMachineOperation(detalConfig.get_config())
 
