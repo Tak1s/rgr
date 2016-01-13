@@ -1,7 +1,7 @@
 
 class GetDetailInfo:
     def __init__(self, *args):
-        self.dict_config = {0: {'diam':'6', 'isThread': False, 'leng': '1', 'faskSize': None, 'severity': '3.2', 'isFask': False}, 1: {'diam':'3', 'isThread': False, 'leng': '2', 'faskSize': None, 'severity': '3.2', 'isFask': False}}
+        self.dict_config = {0: {'diam':'6', 'isThread': True, 'leng': '1', 'faskSize': None, 'severity': '3.2', 'isFask': False}, 1: {'diam':'3', 'isThread': False, 'leng': '2', 'faskSize': "5", 'severity': '3.2', 'isFask': True}}
         # self.count_level = input("Введіть кількість ступенів: ")
         # self.dict_config = {a: {'diam':None, 'leng':None, 'severity':None, 'isThread':False, 'isFask':False, 'faskSize':None} for a in range(int(self.count_level))}
         # self.isFask = False
@@ -149,12 +149,23 @@ class DisplayMachinePperation:
             _severity = self.detalConfig[i]['severity']
             _diam = self.detalConfig[i]['diam']
             _leng = self.detalConfig[i]['leng']
-            _tpl_operation = self.ra_tpl[_severity]
-            self.list_operation.append(_tpl_operation.format(_leng, _diam))
+            if i is 0:
+                self.list_operation.append('Точити поверхню діаметром %s' % _diam)
+            else:
+                _tpl_operation = self.ra_tpl[_severity]
+                self.list_operation.append(_tpl_operation.format(_leng, _diam))
+        for i in self.detalConfig:
+            if self.detalConfig[i]['isFask']:
+                _size_fask = self.detalConfig[i]['faskSize']
+                self.list_operation.append('Точити фаску {0} величиною {1}'.format((int(i)+1), _size_fask))
+        for i in self.detalConfig:
+            if self.detalConfig[i]['isThread']:
+                self.list_operation.append('Точити різьбу %s' % (int(i)+1))
 
-        self.full_string = ('''005 Заготівельна\n010 Токарна\nПідрізати торець\n%s\n015 Контрольна''' % ("\n".join(self.list_operation)))
 
-        # print(str(self.detalConfig))
+
+        self.full_string = ('''005 Заготівельна\n010 Токарна\nПідрізати торець\n%s\nВідрізати заготовку\n015 Контрольна''' % ("\n".join(self.list_operation)))
+
         print(self.full_string)
 
 
