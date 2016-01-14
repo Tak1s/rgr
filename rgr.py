@@ -200,6 +200,18 @@ class DisplayMachineOperation:
             '1.6':'Чорнове, напівчистове, чистове точіння ',
             '0.8':'Чорнове, напівчистове, чистове точіння, шліфування '
         }
+        _mass_fin = []
+        _mass_min = []
+        _mass_plus = []
+
+        for i in self.detalConfig:
+            if i < len(self.detalConfig)-1:
+                if self.detalConfig[i]['diam'] < self.detalConfig[i+1]['diam']:
+                    _mass_plus.append(self.detalConfig[i])
+                elif self.detalConfig[i]['diam'] > self.detalConfig[i+1]['diam']:
+                    _mass_min.append(self.detalConfig[i])
+
+
 
         for i in self.detalConfig:
             _severity = self.detalConfig[i]['severity']
