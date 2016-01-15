@@ -1,17 +1,17 @@
 
 class GetDetailInfo:
     def __init__(self, *args):
-        # self.dict_config = {0: {'diam':'6', 'isThread': True, 'leng': '1', 'faskSize': None, 'severity': '3.2', 'isFask': False}, 1: {'diam':'3', 'isThread': False, 'leng': '2', 'faskSize': "5", 'severity': '3.2', 'isFask': True}}
-        self.count_level = self.get_count_level()
-        self.dict_config = {a: {'diam':None, 'leng':None, 'severity':None, 'isThread':False, 'isFask':False, 'faskSize':None} for a in range(int(self.count_level))}
-        self.isFask = False
-
-        self.get_diameter(self.count_level)
-        self.get_leng_level(self.count_level)
-        self.get_severity_level()
-        self.get_thread()
-        self.get_fask()
-        self.get_size_fask()
+        self.dict_config = {0: {'severity': '3.2', 'isThread': False, 'faskSize': None, 'leng': 1, 'diam': 2, 'isFask': False}, 1: {'severity': '3.2', 'isThread': False, 'faskSize': None, 'leng': 2, 'diam': 4, 'isFask': False}, 2: {'severity': '3.2', 'isThread': False, 'faskSize': None, 'leng': 3, 'diam': 6, 'isFask': False}, 3: {'severity': '3.2', 'isThread': False, 'faskSize': None, 'leng': 4, 'diam': 3, 'isFask': False}, 4: {'severity': '3.2', 'isThread': False, 'faskSize': None, 'leng': 5, 'diam': 2, 'isFask': False}}
+        # self.count_level = self.get_count_level()
+        # self.dict_config = {a: {'diam':None, 'leng':None, 'severity':None, 'isThread':False, 'isFask':False, 'faskSize':None} for a in range(int(self.count_level))}
+        # self.isFask = False
+        #
+        # self.get_diameter(self.count_level)
+        # self.get_leng_level(self.count_level)
+        # self.get_severity_level()
+        # self.get_thread()
+        # self.get_fask()
+        # self.get_size_fask()
 
     def get_config(self):
         return self.dict_config
@@ -191,8 +191,9 @@ class DisplayMachineOperation:
     def __init__(self, _detalConfig):
         self.detalConfig = _detalConfig
 
+        self.sort_mass()
         self.list_operation = []
-        _steck = {}
+
         self.ra_tpl = {
             '12.5':'Чорнове точіння ',
             '6.3':'Чорнове, напівчистове точіння ',
@@ -223,6 +224,17 @@ class DisplayMachineOperation:
         print(self.full_string)
 
         self.print_to_file()
+
+    def sort_mass(self):
+        _flag = None
+        _index = 0
+        _steck = {}
+        for i in self.detalConfig:
+            if int(i)+1 < len(self.detalConfig):
+                _cur_diam = self.detalConfig[i]['diam']
+                _next_diam = self.detalConfig[i+1]['diam']
+                if _flag is "+":
+
 
     def print_to_file(self):
         f = open('result-machine-operation.txt', 'w')
