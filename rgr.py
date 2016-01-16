@@ -1,11 +1,11 @@
-
+# класс для получения данных от пользователя
 class GetDetailInfo:
     def __init__(self, *args):
-        # self.dict_config = {0: {'id':0, 'severity': '3.2', 'isThread': False, 'faskSize': None, 'leng': 1, 'diam': 2, 'isFask': False}, 1: {'id':1, 'severity': '3.2', 'isThread': False, 'faskSize': None, 'leng': 2, 'diam': 4, 'isFask': False}, 2: {'id':2, 'severity': '3.2', 'isThread': False, 'faskSize': None, 'leng': 3, 'diam': 6, 'isFask': False}, 3: {'id':3, 'severity': '3.2', 'isThread': False, 'faskSize': None, 'leng': 4, 'diam': 3, 'isFask': False}, 4: {'id':4, 'severity': '3.2', 'isThread': False, 'faskSize': None, 'leng': 5, 'diam': 8, 'isFask': False}}
-        self.count_level = self.get_count_level()
-        self.dict_config = {a: {'id':a, 'diam':None, 'leng':None, 'severity':None, 'isThread':False, 'isFask':False, 'faskSize':None} for a in range(int(self.count_level))}
-        self.isFask = False
+        self.count_level = self.get_count_level() #количество ступеней
+        self.dict_config = {a: {'id':a, 'diam':None, 'leng':None, 'severity':None, 'isThread':False, 'isFask':False, 'faskSize':None} for a in range(int(self.count_level))} # создаем дефолтный конфиг на количество ступеней
+        self.isFask = False # вспомагательная переменная - будут ли точиться фаски
 
+        # вызов функций
         self.get_diameter(self.count_level)
         self.get_leng_level(self.count_level)
         self.get_severity_level()
@@ -13,19 +13,23 @@ class GetDetailInfo:
         self.get_fask()
         self.get_size_fask()
 
+    # функция с помощю которой мы можем получить готовый конфиг за пределами данного класса
     def get_config(self):
         return self.dict_config
-
+    # функция для получения количества ступеней
     def get_count_level(self):
-        _data = input("Введіть кількість ступенів: ")
+        _data = input("Введіть кількість ступенів: ") # получаем инфо
+        #блок для проверки коректности данных
         try:
-            _item = int(_data)
+            _item = int(_data) #преобразовуем в int значение
         except Exception:
             print("Введено невірне значення!\n")
-            return self.get_count_level()
+            return self.get_count_level() # если данные не цифра значит сообщаем пользователю и запускаем эту же функция что бы спросить заново
         else:
-            return _item
+            return _item # если данные коректны возвращаем введенные данные коду который вызвал данную функцию
+        #### Аналогичный код комментировать больше не буду
 
+    # функция для получения значения к конкретной ступене
     def get_item(self, mess, index):
         _data = input(mess % (index+1))
         try:
@@ -35,59 +39,59 @@ class GetDetailInfo:
             return self.get_item(mess, index)
         else:
             return _item
-
+    # функция для получения диаметра
     def get_diameter(self, count_level):
-
-        for i in range(int(count_level)):
-            self.dict_config[i]['diam'] = self.get_item("Введіть діаметр %s-го ступеню: ", i)
-
+        for i in range(int(count_level)): # проходим по массиву
+            self.dict_config[i]['diam'] = self.get_item("Введіть діаметр %s-го ступеню: ", i) # получаем информацию по ступени и записываем в конфиг
+    # функция для получения длинны ступени
     def get_leng_level(self, count_level):
         for i in range(int(count_level)):
             self.dict_config[i]['leng'] = self.get_item("Введіть довжину %s-го ступеню: ",i)
-
+    # функция для получения досткости Ra изделия
     def get_severity_level(self):
-
+        # функция для парсинга введенной строки - данные досткости
         def _get_one_severity(text):
-            const_severity = ["12.5", "6.3", "3.2", "1.6", "0.8"]
-            item = input(text)
-            item = item.replace(",", ".")
+            const_severity = ["12.5", "6.3", "3.2", "1.6", "0.8"] #массив с условиями
+            item = input(text) # получаем инфу от юзера
+            item = item.replace(",", ".") # заменяем розделительные знаки на подходящие нам
             if item in const_severity:
-                return item
+                return item # если значение подходит, возвращаем его программе
             else:
                 print("Неверній параметр жосткости!!!\n")
-                _get_one_severity(text)
-
+                _get_one_severity(text) # ошибка и спрашиваем заново
+        # функция для выбора дальнейшего действитя
         def _get_action():
             _data = input(
                 "Вызначіть Ra ступенів:\n\t1 - жорсткість Ra  однакова для всіх ступенів\n\t2 - жорсткість Ra різна для кожного ступеня\n"
-            )
+            ) # получаем значение
             try:
                 _item = int(_data)
             except Exception:
                 print("Введено невірне значення!\n")
                 return _get_action()
             else:
-                if _item in [1, 2]:
+                if _item in [1, 2]: # если значение попадает в наш диапазон, возвращаем программе
                     return _item
                 else:
                     print("Введено невірне значення!\n")
-                    return _get_action()
+                    return _get_action() # если ошибка, заново
 
-        severity_level = _get_action()
+        severity_level = _get_action() # вызываем функцию и записываем результат
 
-        if int(severity_level) is 1:
-            _severity_level = _get_one_severity("Введіть жорсткість Ra для ступенів: ")
+        if int(severity_level) is 1: # если введено 1 то получаем
+            _severity_level = _get_one_severity("Введіть жорсткість Ra для ступенів: ") # получаем жосткость для всех ступеней
             for i in range(int(self.count_level)):
-                self.dict_config[i]['severity'] = _severity_level
+                self.dict_config[i]['severity'] = _severity_level # в цикле зписываем жосткость для всех
         elif int(severity_level) is 2:
             for i in range(int(self.count_level)):
-                self.dict_config[i]['severity'] = _get_one_severity("Введіть жорсткість Ra %s-го ступеню: " % (i+1))
+                self.dict_config[i]['severity'] = _get_one_severity("Введіть жорсткість Ra %s-го ступеню: " % (i+1)) # в цикле спрашиваем жосткость для каждого елемента и записываем
         else:
             print("Невірне значення!!!\n\n")
-            self.get_severity_level()
+            self.get_severity_level() # неверное значение, спрашиваем заново.
 
-
+    # функция которая получает информацию по резьбе
     def get_thread(self):
+        # функция которая парсит массив номеров ступеней из введенной строки
         def _get_one_item():
             item = input("На яких ступенях присутьня різьба: ")
             array_item = item.replace(".", ",").split(",")
@@ -109,7 +113,7 @@ class GetDetailInfo:
 
             if _zero is False:
                 _get_one_item()
-
+        # функция для выбора дальнейшего действитя
         def _get_action():
             _data = input("Наявність різьби на поверхні:\n\t1 - є різьба\n\t0 - немає різьби\n")
             try:
@@ -130,7 +134,7 @@ class GetDetailInfo:
             _get_one_item()
         elif int(_thread) is 0:
             print("Різьби немає!")
-
+    # Функция получает инфу по фаскам
     def get_fask(self):
 
         def _get_one_item():
@@ -175,7 +179,7 @@ class GetDetailInfo:
             _get_one_item()
         elif int(_fask) is 0:
             print("Фасок немає!")
-
+    # функция получает инфу по размерам фаски
     def get_size_fask(self):
         if self.isFask is False:
             return
@@ -185,13 +189,12 @@ class GetDetailInfo:
                 continue
             self.dict_config[i]['faskSize'] = self.get_item("Введіть розмір %s-ї фаски: ", i)
 
-
+# класс для построения результата программы и вывода в файл
 class DisplayMachineOperation:
 
     def __init__(self, _detalConfig):
         self.detalConfig = _detalConfig
-
-        self.detalConfig = self.sort_mass()
+        self.detalConfig = self.sort_mass() # сортируем конфиг и получаем итоговый массив для вывода
         self.list_operation = []
         _first = True
         self.ra_tpl = {
@@ -200,17 +203,18 @@ class DisplayMachineOperation:
             '3.2':'Чорнове, напівчистове, чистове точіння ',
             '1.6':'Чорнове, напівчистове, чистове точіння ',
             '0.8':'Чорнове, напівчистове, чистове точіння, шліфування '
-        }
-
+        } # шаблон для вывода
+        # Пробегаем по массиву конфига
         for _arr in self.detalConfig:
+            #пробегаем по подмассиву
             for obj in _arr:
-                _severity = obj['severity']
-                _diam = obj['diam']
-                _leng = obj['leng']
-                _tpl_operation = self.ra_tpl[_severity]
-                if _first is True:
+                _severity = obj['severity'] # получаем жосткость ступени
+                _diam = obj['diam'] # получаем диаметр
+                _leng = obj['leng'] # получаем длинну
+                _tpl_operation = self.ra_tpl[_severity] # получаем шаблон для действия
+                if _first is True: # проверяем на первый елемент в массиве
                     _first = False
-                    self.list_operation.append((_tpl_operation+'поверхні діаметром %s') % _diam)
+                    self.list_operation.append((_tpl_operation+'поверхні діаметром %s') % _diam) # спец шаблон без длинны
                 else:
                     self.list_operation.append((_tpl_operation+'довжини {0} діаметром {1}').format(_leng, _diam))
             for obj in _arr:
