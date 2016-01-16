@@ -1,17 +1,17 @@
 
 class GetDetailInfo:
     def __init__(self, *args):
-        self.dict_config = {0: {'severity': '3.2', 'isThread': False, 'faskSize': None, 'leng': 1, 'diam': 2, 'isFask': False}, 1: {'severity': '3.2', 'isThread': False, 'faskSize': None, 'leng': 2, 'diam': 4, 'isFask': False}, 2: {'severity': '3.2', 'isThread': False, 'faskSize': None, 'leng': 3, 'diam': 6, 'isFask': False}, 3: {'severity': '3.2', 'isThread': False, 'faskSize': None, 'leng': 4, 'diam': 3, 'isFask': False}, 4: {'severity': '3.2', 'isThread': False, 'faskSize': None, 'leng': 5, 'diam': 2, 'isFask': False}}
-        # self.count_level = self.get_count_level()
-        # self.dict_config = {a: {'diam':None, 'leng':None, 'severity':None, 'isThread':False, 'isFask':False, 'faskSize':None} for a in range(int(self.count_level))}
-        # self.isFask = False
-        #
-        # self.get_diameter(self.count_level)
-        # self.get_leng_level(self.count_level)
-        # self.get_severity_level()
-        # self.get_thread()
-        # self.get_fask()
-        # self.get_size_fask()
+        # self.dict_config = {0: {'id':0, 'severity': '3.2', 'isThread': False, 'faskSize': None, 'leng': 1, 'diam': 2, 'isFask': False}, 1: {'id':1, 'severity': '3.2', 'isThread': False, 'faskSize': None, 'leng': 2, 'diam': 4, 'isFask': False}, 2: {'id':2, 'severity': '3.2', 'isThread': False, 'faskSize': None, 'leng': 3, 'diam': 6, 'isFask': False}, 3: {'id':3, 'severity': '3.2', 'isThread': False, 'faskSize': None, 'leng': 4, 'diam': 3, 'isFask': False}, 4: {'id':4, 'severity': '3.2', 'isThread': False, 'faskSize': None, 'leng': 5, 'diam': 8, 'isFask': False}}
+        self.count_level = self.get_count_level()
+        self.dict_config = {a: {'id':a, 'diam':None, 'leng':None, 'severity':None, 'isThread':False, 'isFask':False, 'faskSize':None} for a in range(int(self.count_level))}
+        self.isFask = False
+
+        self.get_diameter(self.count_level)
+        self.get_leng_level(self.count_level)
+        self.get_severity_level()
+        self.get_thread()
+        self.get_fask()
+        self.get_size_fask()
 
     def get_config(self):
         return self.dict_config
@@ -191,9 +191,9 @@ class DisplayMachineOperation:
     def __init__(self, _detalConfig):
         self.detalConfig = _detalConfig
 
-        self.sort_mass()
+        self.detalConfig = self.sort_mass()
         self.list_operation = []
-
+        _first = True
         self.ra_tpl = {
             '12.5':'Чорнове точіння ',
             '6.3':'Чорнове, напівчистове точіння ',
@@ -201,35 +201,30 @@ class DisplayMachineOperation:
             '1.6':'Чорнове, напівчистове, чистове точіння ',
             '0.8':'Чорнове, напівчистове, чистове точіння, шліфування '
         }
-        _mass_fin = []
-        _mass_min = []
-        _mass_plus = []
 
-        for i in self.detalConfig:
-            if i < len(self.detalConfig)-1:
-                if self.detalConfig[i]['diam'] < self.detalConfig[i+1]['diam']:
-                    _mass_plus.append(self.detalConfig[i])
-                elif self.detalConfig[i]['diam'] > self.detalConfig[i+1]['diam']:
-                    _mass_min.append(self.detalConfig[i])
+        for _arr in self.detalConfig:
+            for obj in _arr:
+                _severity = obj['severity']
+                _diam = obj['diam']
+                _leng = obj['leng']
+                _tpl_operation = self.ra_tpl[_severity]
+                if _first is True:
+                    _first = False
+                    self.list_operation.append((_tpl_operation+'поверхні діаметром %s') % _diam)
+                else:
+                    self.list_operation.append((_tpl_operation+'довжини {0} діаметром {1}').format(_leng, _diam))
+            for obj in _arr:
+                if obj['isFask']:
+                    _size_fask = obj['faskSize']
+                    self.list_operation.append('Точити фаску {0} величиною {1}'.format((int(obj['id'])+1), _size_fask))
+            for obj in _arr:
+                if obj['isThread']:
+                    self.list_operation.append('Точити різьбу %s' % (int(obj['id'])+1))
 
+            self.list_operation.append('Переустановити')
+        else:
+            self.list_operation.pop()
 
-
-        for i in self.detalConfig:
-            _severity = self.detalConfig[i]['severity']
-            _diam = self.detalConfig[i]['diam']
-            _leng = self.detalConfig[i]['leng']
-            _tpl_operation = self.ra_tpl[_severity]
-            if i is 0:
-                self.list_operation.append((_tpl_operation+'поверхні діаметром %s') % _diam)
-            else:
-                self.list_operation.append((_tpl_operation+'довжини {0} діаметром {1}').format(_leng, _diam))
-        for i in self.detalConfig:
-            if self.detalConfig[i]['isFask']:
-                _size_fask = self.detalConfig[i]['faskSize']
-                self.list_operation.append('Точити фаску {0} величиною {1}'.format((int(i)+1), _size_fask))
-        for i in self.detalConfig:
-            if self.detalConfig[i]['isThread']:
-                self.list_operation.append('Точити різьбу %s' % (int(i)+1))
 
         self.full_string = ('''005 Заготівельна\n010 Токарна\nПідрізати торець\n%s\nВідрізати заготовку\n015 Контрольна''' % ("\n".join(self.list_operation)))
 
@@ -240,12 +235,45 @@ class DisplayMachineOperation:
     def sort_mass(self):
         _flag = None
         _index = 0
-        _steck = {}
+        _stack = [[]]
+        _stack[_index].append(self.detalConfig[0])
+
+        def _sort_stack(_stack):
+            for i in _stack:
+                i.sort(key=lambda x: x['diam'], reverse=True)
+            _stack.sort(key=lambda x: x[0]['diam'], reverse=True)
+            return _stack
+
         for i in self.detalConfig:
             if int(i)+1 < len(self.detalConfig):
                 _cur_diam = self.detalConfig[i]['diam']
                 _next_diam = self.detalConfig[i+1]['diam']
-                if _flag is "+":
+                if _cur_diam < _next_diam:
+                    if _flag is "+":
+                        _stack[_index].append(self.detalConfig[i+1])
+                    elif _flag is "-":
+                        _index = _index+1
+                        _stack.append([])
+                        _stack[_index].append(self.detalConfig[i+1])
+                        _flag = None
+                    else:
+                        _flag = "+"
+                        _stack[_index].append(self.detalConfig[i+1])
+                elif _cur_diam > _next_diam:
+                    if _flag is "+":
+                        _index = _index+1
+                        _stack.append([])
+                        _stack[_index].append(self.detalConfig[i+1])
+                        _flag = None
+                    elif _flag is "-":
+                        _stack[_index].append(self.detalConfig[i+1])
+                    else:
+                        _flag = "-"
+                        _stack[_index].append(self.detalConfig[i+1])
+                else:
+                    continue
+        return _sort_stack(_stack)
+
 
 
     def print_to_file(self):
