@@ -195,6 +195,7 @@ class DisplayMachineOperation:
     def __init__(self, _detalConfig):
         self.detalConfig = _detalConfig
         self.detalConfig = self.sort_mass() # сортируем конфиг и получаем итоговый массив для вывода
+        self.list_operation_conf = []
         self.list_operation = []
         _first = True
         self.ra_tpl = {
@@ -229,8 +230,41 @@ class DisplayMachineOperation:
         else:
             self.list_operation.pop()
 
+        for _arr in self.detalConfig:
+            for obj in _arr:
+                _id = obj['id']
+                _severity = obj['severity']
+                _diam = obj['diam']
+                _leng = obj['leng']
+                _isThread = obj['isThread']
+                _isFask = obj['isFask']
+                _faskSize = obj['faskSize']
+                self.list_operation_conf.append("""
+ID - {0}\n
+Диаметр - {1}\n
+Довжина - {2}\n
+Жорсткість Ra - {3}\n
+Різьба - {4}\n
+Фаска - {5}\n
+Розмір фаска - {6}\n
+                """.format(_id, _diam, _leng, _severity, _isThread, _isFask, _faskSize))
 
-        self.full_string = ('''005 Заготівельна\n010 Токарна\nПідрізати торець\n%s\nВідрізати заготовку\n015 Контрольна''' % ("\n".join(self.list_operation)))
+
+
+        self.full_string = ('''
+        Підсистема проектування технології\n
+           виготовлення деталей класу 71\n
+          (підкласи 711000 713000 715000)\n
+        Виконав: Нестеренко А.О. гр. ПБ-21\n\n
+---------------------------------
+005 Заготівельна\n
+010 Токарна\n
+Підрізати торець\n
+{0}\n
+Відрізати заготовку\n
+015 Контрольна\n\n
+---------------------------------
+{1}'''.format("\n".join(self.list_operation), "\n".join(self.list_operation_conf)))
 
         print(self.full_string)
 
